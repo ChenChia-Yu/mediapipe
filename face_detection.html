@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-segmentation"></script>
+    
+    <!-- Optional: Include below scripts if you want to use TensorFlow.js runtime. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    
+</head>
+<style>
+    canvas{
+        transform:rotateY(180deg);
+    }
+</style>
+<body>
+  <img id="image" src="cross_turkey.png" alt="">  
+  <div class="container">
+    <video class="input_video" style="display: none;"></video>
+    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
+  </div>
+</body>
+<script type="module">
+    const videoElement = document.getElementsByClassName('input_video')[0];
+    const canvasElement = document.getElementsByClassName('output_canvas')[0];
+    console.log(canvasElement);
+    const canvasCtx = canvasElement.getContext('2d');
+
+    function onResults(results) {
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.drawImage(
+            results.image, 0, 0, canvasElement.width, canvasElement.height);
+        if (results.multiHandLandmarks) {
+            for (const landmarks of results.multiHandLandmarks) {
+            
+                let img = document.getElementById("image");
+                // img.style.width = landmarks[9].z 
+                console.log(landmarks);
+                canvasCtx.drawImage(img,(landmarks[9].x * 1280) - (img.width/2) , (landmarks[9].y * 720) - (img.height/2));
+                // let new_imgWidth = - (landmarks[9].z * 10 * 100);
+                // img.width = new_imgWidth + "%";
+                // console.log(img.width);
+            }
+        }
+        canvasCtx.restore();
+    }
+
+    const hands = new Hands({locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+    hands.setOptions({
+        maxNumHands: 2,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+    });
+    hands.onResults(onResults);
+
+    // selfieSegmentation
+    // const selfieSegmentation = new SelfieSegmentation({locateFile: (file) => {
+    //     return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
+    // }});
+    // selfieSegmentation.setOptions({
+    // modelSelection: 1,
+    // });
+    // selfieSegmentation.onResults(onResults);
+
+    // const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation; // or 'BodyPix'
+
+    // const segmenterConfig = {
+    //     runtime: 'mediapipe', // or 'tfjs'
+    //     modelType: 'general' // or 'landscape'
+    // };
+
+    // segmenter = await bodySegmentation.createSegmenter(model, segmenterConfig);
+
+
+
+    let camera ;
+
+    camera = new Camera(videoElement, {
+        onFrame: async () => {
+            await hands.send({image: videoElement});
+        },
+        width: 1280,
+        height: 720
+    });
+
+
+    // camera = new Camera(videoElement, {
+    //     onFrame: async () => {
+    //         await selfieSegmentation.send({image: videoElement});
+    //     },
+    //     width: 1280,
+    //     height: 720
+    // });
+
+    camera.start();
+</script>
+</html>
