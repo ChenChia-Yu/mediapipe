@@ -67,7 +67,7 @@
                 let img = document.getElementById("image");
                 // img.style.width = landmarks[9].z 
                 console.log(landmarks);
-                canvasCtx.drawImage(img,(landmarks[9].x * 1280) - (img.width/2) , (landmarks[9].y * 720) - (img.height/2));
+                canvasCtx.drawImage(img,(landmarks[9].x * window.innerWidth) - (img.width/2) , (landmarks[9].y * window.innerHeight) - (img.height/2));
                 // let new_imgWidth = - (landmarks[9].z * 10 * 100);
                 // img.width = new_imgWidth + "%";
                 // console.log(img.width);
