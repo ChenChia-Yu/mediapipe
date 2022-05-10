@@ -65,8 +65,11 @@
         cursor: pointer;
         background: white;
         border-radius: 15px;
-        float: right;
         padding:10px;
+        position: absolute;
+        left:10px;
+        bottom:10px;
+        font-size: 2.3vw;
     }
 </style>
 <body>
@@ -77,8 +80,8 @@
     <video class="input_video" style="display: none;"></video>
     <canvas id="my_canvas" class="output_canvas" ></canvas>  
 
+  <div class="download" onClick="download()">DownLoad</div>
   <div class="icon">
-    <div class="download" onClick="download()">DownLoad</div>
     <img onClick="change_icon('cross_turkey')" id="cross_turkey" src="cross_turkey.png" alt="">
     <img onClick="change_icon('turkey_handsup')" id="turkey_handsup" src="turkey_handsup.png" alt="">
     <img onClick="change_icon('teacher_turkey')" id="teacher_turkey" src="teacher_turkey.png" alt="">
@@ -121,11 +124,6 @@
         if (results.multiHandLandmarks) {
             for (const landmarks of results.multiHandLandmarks) {
             
-               
-                console.log(turkey);
-                console.log(landmarks);
-                // img.style.width = landmarks[9].z 
-                // console.log(landmarks);
                 if( 
                     (landmarks[8].y * window.innerHeight < landmarks[7].y * window.innerHeight) &&
                     (landmarks[8].y * window.innerHeight < landmarks[6].y * window.innerHeight) &&
