@@ -89,6 +89,8 @@
     <!-- <img id="serious" src="serious_turkey.png" alt="">
     <img id="serious" src="serious_turkey.png" alt=""> -->
   </div>
+  <img  id="decoration" src="decoration.png" alt="">
+  <img  id="logo" src="logo.png" alt="">
 </body>
 <script>
     const videoElement = document.getElementsByClassName('input_video')[0];
@@ -207,6 +209,9 @@
     function download(){
         let canvas = document.getElementById("my_canvas");
         let anchor = document.createElement("a");
+        let decoration = document.getElementById("decoration");
+        let logo = document.getElementById("logo");
+        canvasCtx.drawImage(decoration,0,0,canvasElement.width,canvasElement.height);
         anchor.href=canvas.toDataURL("image/png");
         anchor.download = "my_image.png";
         console.log();
