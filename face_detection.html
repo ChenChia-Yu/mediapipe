@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   <!-- CSS only -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   
     <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-segmentation"></script> -->
@@ -24,15 +24,11 @@
     }
 
     canvas{
-        transform:rotateY(180deg);
-        /* position:fixed; */
+
         top:0;
         left:0;
         right:0;
         bottom:0;
-
-        /* width:100%;
-        height:100%; */
     }
 
     .icon{
@@ -51,14 +47,24 @@
         padding: 5px;
         margin:10px;
         background: white;
+        cursor: pointer;
+    }
+
+    .download{
+        cursor: pointer;
+        background: white;
+        border-radius: 15px;
+        float: right;
+        padding:10px;
     }
 </style>
 <body>
   <!-- <img id="image" src="cross_turkey.png" alt="">   -->
     <video class="input_video" style="display: none;"></video>
-    <canvas class="output_canvas" ></canvas>  
+    <canvas id="my_canvas" class="output_canvas" ></canvas>  
 
   <div class="icon">
+    <div class="download" onClick="download()">DownLoad</div>
     <img onClick="change_icon('cross_turkey')" id="cross_turkey" src="cross_turkey.png" alt="">
     <img onClick="change_icon('turkey_handsup')" id="turkey_handsup" src="turkey_handsup.png" alt="">
     <img onClick="change_icon('teacher_turkey')" id="teacher_turkey" src="teacher_turkey.png" alt="">
@@ -71,22 +77,26 @@
   </div>
 </body>
 <script>
-    let turkey = document.getElementById("cross_turkey");
-    function change_icon(image){
-        turkey = document.getElementById(image) ;
-    }
-</script>
-<script type="module">
     const videoElement = document.getElementsByClassName('input_video')[0];
     const canvasElement = document.getElementsByClassName('output_canvas')[0];
     canvasElement.width=window.innerWidth;
     canvasElement.height=window.innerHeight;
 
     console.log(canvasElement);
-    const canvasCtx = canvasElement.getContext('2d');
+    let canvasCtx = canvasElement.getContext('2d');
 
+    let turkey = document.getElementById("cross_turkey");
+    
+    function change_icon(image){
+        turkey = document.getElementById(image) ;
+    }
+</script>
+<script type="module">
+    
+    
+    canvasCtx.translate(canvasElement.width, 0);
+    canvasCtx.scale(-1, 1);
     function onResults(results) {
-
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         canvasCtx.drawImage(
@@ -96,10 +106,26 @@
             
                
                 console.log(turkey);
+                console.log(landmarks);
                 // img.style.width = landmarks[9].z 
                 // console.log(landmarks);
-                canvasCtx.drawImage(turkey,(landmarks[8].x * window.innerWidth), (landmarks[8].y * window.innerHeight) - (turkey.height ));
-                canvasCtx.drawImage(turkey,(landmarks[12].x * window.innerWidth) , (landmarks[12].y * window.innerHeight) - (turkey.height));
+                if( 
+                    (landmarks[8].y * window.innerHeight < landmarks[7].y * window.innerHeight) &&
+                    (landmarks[8].y * window.innerHeight < landmarks[6].y * window.innerHeight) &&
+                    (landmarks[8].y * window.innerHeight < landmarks[5].y * window.innerHeight) &&
+                    (landmarks[8].y * window.innerHeight < landmarks[0].y * window.innerHeight) &&
+                    (landmarks[12].y * window.innerHeight < landmarks[11].y * window.innerHeight) &&
+                    (landmarks[12].y * window.innerHeight < landmarks[10].y * window.innerHeight) &&
+                    (landmarks[12].y * window.innerHeight < landmarks[9].y * window.innerHeight) &&
+                    (landmarks[12].y * window.innerHeight < landmarks[0].y * window.innerHeight) &&
+                    (landmarks[16].y * window.innerHeight > landmarks[15].y * window.innerHeight) &&
+                    (landmarks[16].y * window.innerHeight > landmarks[14].y * window.innerHeight) &&
+                    (landmarks[20].y * window.innerHeight > landmarks[19].y * window.innerHeight) &&
+                    (landmarks[20].y * window.innerHeight > landmarks[18].y * window.innerHeight) 
+                ){
+                    canvasCtx.drawImage(turkey,(landmarks[8].x * window.innerWidth), (landmarks[8].y * window.innerHeight) - (turkey.height ));
+                    canvasCtx.drawImage(turkey,(landmarks[12].x * window.innerWidth) , (landmarks[12].y * window.innerHeight) - (turkey.height));
+                }
                 // let new_imgWidth = - (landmarks[9].z * 10 * 100);
                 // img.width = new_imgWidth + "%";
                 // console.log(img.width);
@@ -119,6 +145,7 @@
     });
     hands.onResults(onResults);
 
+    
     // selfieSegmentation
     // const selfieSegmentation = new SelfieSegmentation({locateFile: (file) => {
     //     return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
@@ -160,4 +187,16 @@
 
     camera.start();
 </script>
+
+<script>
+    function download(){
+        let canvas = document.getElementById("my_canvas");
+        let anchor = document.createElement("a");
+        anchor.href=canvas.toDataURL("image/png");
+        anchor.download = "my_image.png";
+        console.log();
+        anchor.click();
+    }
+</script>
+
 </html>
