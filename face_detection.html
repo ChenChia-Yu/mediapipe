@@ -23,6 +23,17 @@
         overflow: hidden;
     }
 
+    .loading,.loading p{
+        font-size: 5vw;
+        text-align: center;
+        color:#961D16;
+        position:fixed;
+        top:0;
+        left:0;
+        right: 0;
+        bottom:0;
+    }
+
     canvas{
 
         top:0;
@@ -60,6 +71,9 @@
 </style>
 <body>
   <!-- <img id="image" src="cross_turkey.png" alt="">   -->
+    <div id="loading" class="loading">
+        <p>LOADING....</p>
+    </div>
     <video class="input_video" style="display: none;"></video>
     <canvas id="my_canvas" class="output_canvas" ></canvas>  
 
@@ -97,6 +111,7 @@
     canvasCtx.translate(canvasElement.width, 0);
     canvasCtx.scale(-1, 1);
     function onResults(results) {
+        loading.style.display = "none";
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
         canvasCtx.drawImage(
